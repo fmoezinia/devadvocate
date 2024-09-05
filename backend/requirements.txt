@@ -1,0 +1,16 @@
+click
+gunicorn
+python-dotenv
+elevenlabs
+librosa
+openai
+tiktoken
+quart
+quart-cors
+quart-session
+redis
+fastapi
+uvicorn
+logging
+websockets
+json

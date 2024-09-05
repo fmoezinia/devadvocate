@@ -1,0 +1,102 @@
+/* App.css */
+.App {
+  text-align: center;
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+.chat-container {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  width: 40%; /* Set the width to 80% */
+  max-height: 400px; /* Set the max-height to 400px */
+  margin: 0 auto;
+  padding: 10px;
+  box-shadow: 0px 0px 10px 0px #aaa;
+  overflow-y: auto; /* Add a scrollbar if content exceeds 400px in height */
+}
+
+
+.chat-messages {
+  height: 250px;
+  overflow-y: scroll;
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+.user, .bot {
+  padding: 5px;
+  border-radius: 5px;
+  margin: 5px;
+  max-width: 70%;
+}
+
+.user {
+  background-color: #9ab9da;
+  color: #fff;
+  max-width: 100%; /* Set the max-width to 100% */
+  border-radius: 5px;
+  padding: 5px;
+  margin: 5px;
+  align-self: flex-end;
+}
+
+
+.bot {
+  background-color: #9c8a8a;
+  color: #fff;
+  max-width: 100%; /* Set the max-width to 100% */
+  border-radius: 5px;
+  padding: 5px;
+  margin: 5px;
+  align-self: flex-end;
+}
+
+/* .bot {
+  background-color: #947171;
+  color: #333;
+  align-self: flex-start;
+} */
+
+.input-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f8f9fa; /* Light input background */
+  padding: 10px;
+}
+
+input {
+  flex-grow: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+button {
+  background-color: #007bff; /* Button color */
+  color: white;
+  border: none;
+  border-radius: 20px; /* Rounded button */
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.3s; /* Smooth transition */
+}
+
+button:hover {
+  background-color: #0056b3;
+}
