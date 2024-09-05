@@ -1,6 +1,8 @@
 # AI Voice Chatbot Tutorial
 
-This is a simple chat application built using Flask & React. It allows users to send messages to a chatbot, then get an AI driven response and hear it with audio (while text gets highlighted). The chat interface displays messages in a conversation-style format.
+This is a simple chat application built using Flask & React. Built by Ricky, but extended from a chatbot I found online - credit to Kapil9782.
+
+It allows users to send messages to a chatbot, then get an AI driven response and hear it with audio (while text gets highlighted). The chat interface displays messages in a conversation-style format.
 
 ## Getting Started
 
@@ -13,6 +15,8 @@ Before you begin, make sure you have python and flask.
 # BackEnd
 
 python3 -m venv venv && source venv/bin/activate
+
+
 python3 app.py
 
 Runs the server on port 5000
@@ -43,7 +47,3 @@ It correctly bundles React in production mode and optimizes the build for the be
 ### `npm run eject`
 
 **Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-![image](https://github.com/Kapil7982/ChatBot/assets/103938868/cc188223-ef49-4861-a656-f2806c43fd34)
-
-

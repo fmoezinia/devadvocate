@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 
+// for playing audio // 
 function urlsafeBase64Decode(str) {
     try {
         str = str.replace(/-/g, '+').replace(/_/g, '/');
@@ -24,15 +25,30 @@ function base64ToUint8Array(base64) {
     return bytes;
 }
 
+ // ----------------------------------- //
+
+ 
 const Chat = () => {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
+    const [alignments, setAlignments] = useState([]);
     const audioRef = useRef(null);
     const mediaSourceRef = useRef(null);
     const sourceBufferRef = useRef(null);
     const websocketRef = useRef(null);
     const audioQueueRef = useRef([]);
     const isPlayingRef = useRef(false);
+    const highlightTimer = 0;
+
+    const appendAlignment = (newAlignment) => {
+        setAlignments((prevAlignments) => {
+            console.log(prevAlignments, " is prev ", newAlignment, " is new");
+            const updatedAlignment = [...prevAlignments, ...newAlignment];
+            // Sort messages based on a specific property
+            console.log(updatedAlignment, " updated alignment")
+            return updatedAlignment.sort((a, b) => a[1] - b[1]);
+        });
+    };
 
     useEffect(() => {
         websocketRef.current = new WebSocket('ws://localhost:8000/ws');
@@ -40,8 +56,20 @@ const Chat = () => {
         websocketRef.current.onmessage = async (event) => {
             const data = JSON.parse(event.data);
             if (data.type === 'text') {
-                console.log("got some text back ", data.content);
-                setMessages((prevMessages) => [...prevMessages, { role: 'bot', type: 'text', content: data.content }]);
+                if (data.content) {
+                    setMessages((prevMessages) => {
+                        // Check if there are any previous messages
+                        const lastMessage = prevMessages[prevMessages.length - 1];
+                        if (lastMessage && lastMessage.role === 'bot') {
+                            return [
+                                ...prevMessages.slice(0, -1), // Keep all messages except the last one
+                                { ...lastMessage, content: lastMessage.content + ' ' + data.content } // Update the last message
+                            ];
+                        }
+                        // If no messages exist, create a new one
+                        return [...prevMessages, { role: 'bot', type: 'text', content: data.content }];
+                    });
+                }
 
             } else if (data.type === 'audio') {
                 try {
@@ -50,6 +78,15 @@ const Chat = () => {
                     if (sourceBufferRef.current && !sourceBufferRef.current.updating) {
                         appendNextAudioChunk();
                     }
+                } catch(e) {
+                    console.log(data);
+                    console.log(e);
+                }
+            } else if (data.type === 'alignment') {
+                try {
+                    console.log(data.content, " alignment ");
+                    // setAlignment
+                    appendAlignment(data.content);
                 } catch(e) {
                     console.log(data);
                     console.log(e);
@@ -92,10 +129,35 @@ const Chat = () => {
             setMessages([...messages, { role: 'user', type: 'text', content: input }]);
             websocketRef.current.send(input);
             setInput('');
+
+            // set timer to 0 of the new streamed response
+            // highlightTimer = 0
         } else {
             console.error('WebSocket is not open');
         }
     };
+
+
+    // highlighting....
+
+    // Index = 0
+    // Loop through chars…
+    // Also get index of the next “ “ space
+    // Highlight = index[i][next_space]
+    
+    // next_Timer = 0
+    // While next_timer is not none:
+    //     wait(next_timer)
+    //     Then update highlighted
+    
+    
+    
+    // Receiving audio back….
+    // Sound chunk 0 —--- —- —--- T (5 seconds)
+    
+    
+    // Timestamp for words, 0.5, 1.2, 3.4, 4.4 (finish at 5)...
+    
 
     return (
         <div className="chat-container">

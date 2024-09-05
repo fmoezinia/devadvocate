@@ -27,7 +27,7 @@ aclient = AsyncOpenAI(api_key=OPENAI_API_KEY)
 def calculate_word_start_times(alignment_info):
     # Alignment start times are indexed from the start of the audio chunk that generated them
     # In order to analyse runtime over the entire response we keep a cumulative count of played audio
-    print(" alignment info ", alignment_info)
+    # print(" alignment info ", alignment_info)
     full_alignment = {"chars": [], "charStartTimesMs": [], "charDurationsMs": []}
     cumulative_run_time = 0
     for old_dict in alignment_info:
@@ -57,8 +57,7 @@ def calculate_word_start_times(alignment_info):
             ],
         )
     )
-    print(f"total duration:{cumulative_run_time}")
-    print(word_start_times)
+    # print(word_start_times, " word start times")
     return word_start_times
 
 
@@ -101,8 +100,9 @@ async def process_query(websocket: WebSocket, user_query: str):
             )
             async def listen():
                 audio_chunks = []
-                alignment_info = []
+                all_alignment_info = []
                 received_final_chunk = False
+                latest_alignment = []
                 print("Listening for chunks from ElevenLabs...")
                 while not received_final_chunk:
                     print(" listening here")
@@ -111,20 +111,29 @@ async def process_query(websocket: WebSocket, user_query: str):
                         data = json.loads(message)
                         # print(data, " is the data")
                         if data.get("audio"):
-                            print(" got some audio!")
                             audio_chunk = data["audio"] # this is valid b64
                             await websocket.send_json(
                                 {"type": "audio", "content": audio_chunk}
                             )
+                            audio_chunks.append(audio_chunk)
                         if data.get("alignment"):
-                            alignment_info.append(data.get("alignment"))
+                            al = data.get("alignment")
+                            all_alignment_info.append(al)
+                            word_start_times = calculate_word_start_times(all_alignment_info)
+                            aligment_to_send = list(set(word_start_times) - set(latest_alignment))
+                            latest_alignment = word_start_times
+                            print(aligment_to_send, " alignment to send")
+                            await websocket.send_json(
+                                {"type": "alignment", "content": aligment_to_send}
+                            )
                         if data.get("isFinal"):
                             received_final_chunk = True
                             break
                     except websockets.exceptions.ConnectionClosed as e:
                         print("Connection closed because of ", e)
                         break
-                calculate_word_start_times(alignment_info)
+                
+
 
             listen_task = asyncio.create_task(listen())
             text_to_gen = ""
